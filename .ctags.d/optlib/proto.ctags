@@ -1,0 +1,19 @@
+--languages=-Protobuf
+--langdef=proto
+--map-proto=.proto
+--_fielddef-proto=access,field type (private=optional, protected=required, public=repeated)
+--_fielddef-proto=signature,type
+--regex-proto=/^\s*package\s+([A-Za-z0-9_.]+)\s*;/\1/p,package/
+--regex-proto=/^\s*import\s+"(.+\/)?([A-Za-z0-9_.\-]+)\.proto"\s*;/\2/i,imports/
+--regex-proto=/message\s+([A-Za-z0-9_]+)\s*\{?/\1/m,message/{scope=push}{scope=ref}
+--regex-proto=/\}/}/ /{scope=pop}{placeholder}
+--regex-proto=/^\s*required\s+([A-Za-z0-9_.]+)\s+([A-Za-z0-9_]+)\s*=.+;/\2/f,field/{scope=ref}{_field=access:protected}{_field=signature:(\1)}
+--regex-proto=/^\s*optional\s+([A-Za-z0-9_.]+)\s+([A-Za-z0-9_]+)\s*=.+;/\2/f,field/{scope=ref}{_field=access:private}{_field=signature:(\1)}
+--regex-proto=/^\s*repeated\s+([A-Za-z0-9_.]+)\s+([A-Za-z0-9_]+)\s*=.+;/\2/f,field/{scope=ref}{_field=access:public}{_field=signature:(\1)}
+--regex-proto=/enum\s+([A-Za-z0-9_]+)\s*\{?/\1/e,enum/{scope=push}{scope=ref}
+--regex-proto=/^\s*([A-Za-z0-9_]+)\s*=\s*([0-9]+|0x[0-9A-Fa-f]+)\s*;/\1/v,enum value/{scope=ref}
+--regex-proto=/^\s*service\s+([A-Za-z0-9_]+)\s*\{?/\1/s,service/{scope=push}{scope=ref}
+--regex-proto=/^\s*rpc\s+([A-Za-z0-9_]+)\s*\(([A-Za-z0-9_.]+)\)\s*returns\s*\(([A-Za-z0-9_.]*\.)?([A-Za-z0-9_]+)\)\s*\{?/\1/r,method/{scope=ref}{scope=push}
+--regex-proto=/^\s*rpc\s+([A-Za-z0-9_]+)\s*\(([A-Za-z0-9_.]+)\)\s*returns\s*\(([A-Za-z0-9_.]*\.)?([A-Za-z0-9_]+)\)\s*\{?/\2/q,request/{scope=ref}
+--regex-proto=/^\s*rpc\s+([A-Za-z0-9_]+)\s*\(([A-Za-z0-9_.]+)\)\s*returns\s*\(([A-Za-z0-9_.]*\.)?([A-Za-z0-9_]+)\)\s*\{?/\4/t,response/{scope=ref}
+--fields-proto=+{access}{signature}

@@ -1,0 +1,4 @@
+bundle
+local.vim
+autoload/plug.vim.old
+bundle.tar.xz
