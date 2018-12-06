@@ -31,12 +31,15 @@ call plug#end()
 let g:ale_enabled = 0
 let g:ale_set_quickfix = 1
 let g:ale_linters = {
-    \ 'c': ['cppcheck'],
-    \ 'cpp': ['cppcheck', 'cpplint', 'clangtidy'],
+    \ 'cpp': ['cpplint', 'clangtidy'],
 \ }
-let g:ale_c_cppcheck_options = '--enable=warning,style,performance,portability,information,missingInclude --inline-suppr'
-let g:ale_cpp_cppcheck_options = '--enable=warning,style,performance,portability,information,missingInclude --inline-suppr'
+" cppcheck will check EVERYTHING in compdb, disable it for now
+" let g:ale_c_cppcheck_options = '--enable=warning,style,performance,portability,information,missingInclude --inline-suppr'
+" let g:ale_cpp_cppcheck_options = '--enable=warning,style,performance,portability,information,missingInclude --inline-suppr'
 let g:ale_cpp_clangtidy_executable = 'run-clang-tidy'
+if !executable(g:ale_cpp_clangtidy_executable)
+    let g:ale_cpp_clangtidy_executable = 'clang-tidy'
+endif
 let g:ale_cpp_clangtidy_checks = ['-*', 'boost-*', 'bugprune-*', 'cert-*', 'google-*', 'hicpp-*', 'misc-*', 'modernize-*', 'performance-*', 'readability-*']
 
 " auto-paris
@@ -66,12 +69,17 @@ let g:echodoc#enable_at_startup = 1
 let g:echodoc#type = 'signature'
 
 " LanguageClient
+let s:clangd = expand($LLVM_PATH . '/bin/clangd')
+if !executable(s:clangd)
+    let s:clangd = 'clangd'
+endif
 let g:LanguageClient_serverCommands = {
     \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-    \ 'cpp': ['clangd', '-j=4', '-index', '-pch-storage=memory'],
+    \ 'cpp': [s:clangd, '-j=4', '-index', '-pch-storage=memory'],
     \ 'python': ['pyls', '--log-file', '/tmp/pyls.log'],
 \ }
 let g:LanguageClient_hasSnippetSupport = 0
+let g:LanguageClient_autoOpenLists = ['Locations', 'Symbols']
 
 " LeaderF
 let g:Lf_WindowHeight = 0.3
@@ -122,7 +130,15 @@ function BufNerdHighlight()
     endif
 endfunction
 
+function RefNerdTree()
+    if !IsNTOpen()
+        return
+    endif
+    :NERDTreeRefreshRoot
+endfunction()
+
 autocmd BufEnter * call BufNerdHighlight()
+autocmd BufWritePost * call RefNerdTree()
 
 " tagbar
 let g:tagbar_ctags_bin='ctags'
