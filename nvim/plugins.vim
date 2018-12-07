@@ -2,6 +2,7 @@ silent! call plug#begin('~/.config/nvim/bundle')
 Plug 'w0rp/ale'
 Plug 'jiangmiao/auto-pairs'
 Plug 'dyng/ctrlsf.vim'
+Plug 'vim-scripts/kwbdi.vim'
 Plug 'Shougo/echodoc.vim'
 Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
@@ -24,6 +25,7 @@ Plug 'kshenoy/vim-signature'
 Plug 'mhinz/vim-signify'
 Plug 'honza/vim-snippets'
 Plug 'tpope/vim-surround'
+Plug 'cespare/vim-toml'
 " Plug 'lervag/vimtex'
 call plug#end()
 
@@ -70,8 +72,10 @@ let g:LanguageClient_serverCommands = {
     \ 'rust': ['rustup', 'run', 'stable', 'rls'],
     \ 'cpp': ['clangd', '-j=4', '-index', '-pch-storage=memory'],
     \ 'python': ['pyls', '--log-file', '/tmp/pyls.log'],
+    \ 'go': ['go-langserver', '-maxparallelism=4', '-gocodecompletion'],
 \ }
 let g:LanguageClient_hasSnippetSupport = 0
+let g:LanguageClient_autoOpenLists = ["Locations"]
 
 " LeaderF
 let g:Lf_WindowHeight = 0.3
