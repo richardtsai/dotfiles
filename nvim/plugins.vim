@@ -33,12 +33,15 @@ call plug#end()
 let g:ale_enabled = 0
 let g:ale_set_quickfix = 1
 let g:ale_linters = {
-    \ 'c': ['cppcheck'],
-    \ 'cpp': ['cppcheck', 'cpplint', 'clangtidy'],
+    \ 'cpp': ['cpplint', 'clangtidy'],
 \ }
-let g:ale_c_cppcheck_options = '--enable=warning,style,performance,portability,information,missingInclude --inline-suppr'
-let g:ale_cpp_cppcheck_options = '--enable=warning,style,performance,portability,information,missingInclude --inline-suppr'
+" cppcheck will check EVERYTHING in compdb, disable it for now
+" let g:ale_c_cppcheck_options = '--enable=warning,style,performance,portability,information,missingInclude --inline-suppr'
+" let g:ale_cpp_cppcheck_options = '--enable=warning,style,performance,portability,information,missingInclude --inline-suppr'
 let g:ale_cpp_clangtidy_executable = 'run-clang-tidy'
+if !executable(g:ale_cpp_clangtidy_executable)
+    let g:ale_cpp_clangtidy_executable = 'clang-tidy'
+endif
 let g:ale_cpp_clangtidy_checks = ['-*', 'boost-*', 'bugprune-*', 'cert-*', 'google-*', 'hicpp-*', 'misc-*', 'modernize-*', 'performance-*', 'readability-*']
 
 " auto-paris
@@ -68,14 +71,18 @@ let g:echodoc#enable_at_startup = 1
 let g:echodoc#type = 'signature'
 
 " LanguageClient
+let s:clangd = expand($LLVM_PATH . '/bin/clangd')
+if !executable(s:clangd)
+    let s:clangd = 'clangd'
+endif
 let g:LanguageClient_serverCommands = {
     \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-    \ 'cpp': ['clangd', '-j=4', '-index', '-pch-storage=memory'],
+    \ 'cpp': [s:clangd, '-j=4', '-index', '-pch-storage=memory'],
     \ 'python': ['pyls', '--log-file', '/tmp/pyls.log'],
     \ 'go': ['go-langserver', '-maxparallelism=4', '-gocodecompletion'],
 \ }
 let g:LanguageClient_hasSnippetSupport = 0
-let g:LanguageClient_autoOpenLists = ["Locations"]
+let g:LanguageClient_autoOpenLists = ['Locations', 'Symbols']
 
 " LeaderF
 let g:Lf_WindowHeight = 0.3
@@ -115,6 +122,8 @@ function BufNerdHighlight()
         return
     elseif &previewwindow  " not preview window
         return
+    elseif !filereadable(expand(bufname('%')))  " not exists
+        return
     endif
 
     if !(getline(1) ==# '' && 1 == line('$'))
@@ -126,7 +135,22 @@ function BufNerdHighlight()
     endif
 endfunction
 
+function RefNerdTree(do_refresh)
+    if !IsNTOpen()
+        return
+    endif
+    if a:do_refresh
+        if getbufvar('%', 'should_ref_nerd_tree', v:false)
+            :NERDTreeRefreshRoot
+        endif
+    else
+        call setbufvar('%', 'should_ref_nerd_tree', !filereadable(expand(bufname('%'))))
+    endif
+endfunction()
+
 autocmd BufEnter * call BufNerdHighlight()
+autocmd BufWrite * call RefNerdTree(v:false)
+autocmd BufWritePost * call RefNerdTree(v:true)
 
 " tagbar
 let g:tagbar_ctags_bin='ctags'

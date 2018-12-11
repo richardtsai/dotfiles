@@ -1,12 +1,26 @@
 let mapleader = ';'
 
+function EnsureInNormalWindow()
+    if !buflisted(bufnr('%'))
+        for buf in getbufinfo({'buflisted': 1})
+            let l:win = bufwinnr(buf.bufnr)
+            if l:win > 0
+                exe l:win . 'wincmd w'
+                break
+            endif
+        endfor
+    endif
+endfunction
+
+command EnsureNormWin call EnsureInNormalWindow()
+
 " navigation {{
 nnoremap <C-l> <C-W>l
 nnoremap <C-h> <C-W>h
 nnoremap <C-j> <C-W>j
 nnoremap <C-k> <C-W>k
-nnoremap H :bprevious<CR>
-nnoremap L :bnext<CR>
+nnoremap H :EnsureNormWin<CR>:bprevious<CR>
+nnoremap L :EnsureNormWin<CR>:bnext<CR>
 " keep-windows-buffer-delete
 nmap <leader>D <Plug>Kwbd
 
@@ -23,15 +37,16 @@ map <leader>N <Plug>(easymotion-prev)
 nnoremap <leader><Space> :TagbarToggle<CR>:NERDTreeToggle<CR>:wincmd p<CR>:call BufNerdHighlight()<CR>
 nnoremap <leader>u :UndotreeToggle<CR>
 " choose file
-let g:Lf_ShortcutF = 't'
+let g:NERDTreeMapOpenInTab = '<C-t>' " prevent conflict
+nnoremap t :EnsureNormWin<CR>:LeaderfFile<CR>
 " choose tag
-nnoremap <leader>t :LeaderfBufTag<CR>
-nnoremap <leader>T :LeaderfBufTagCword<CR>
+nnoremap <leader>t :EnsureNormWin<CR>:LeaderfBufTag<CR>
+nnoremap <leader>T :EnsureNormWin<CR>:LeaderfBufTagCword<CR>
 " choose buffer
-let g:Lf_ShortcutB = '<leader>b'
+nnoremap <leader>b :EnsureNormWin<CR>:LeaderfBuffer<CR>
 " choose function
-nnoremap <leader>f :LeaderfFunction<CR>
-nnoremap <leader>F :LeaderfFunctionCword<CR>
+nnoremap <leader>f :EnsureNormWin<CR>:LeaderfFunction<CR>
+nnoremap <leader>F :EnsureNormWin<CR>:LeaderfFunctionCword<CR>
 " }}
 
 " superpower {{
@@ -55,9 +70,9 @@ command! Error call LanguageClient#explainErrorAtPoint()
 let g:UltiSnipsExpandTrigger = '<S-TAB>'
 
 " clang-format works better
-let g:clang_format_py_path = expand($LLVM_PATH . '/share/clang/clang-format.py')
-if filereadable(g:clang_format_py_path)
-    autocmd FileType c,cpp command! -buffer -range=% Format execute '<line1>,<line2>py3file' . g:clang_format_py_path
+let s:clang_format_py_path = expand($LLVM_PATH . '/share/clang/clang-format.py')
+if filereadable(s:clang_format_py_path)
+    autocmd FileType c,cpp command! -buffer -range=% Format execute '<line1>,<line2>py3file' . s:clang_format_py_path
 endif
 " }}
 
