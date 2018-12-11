@@ -119,6 +119,8 @@ function BufNerdHighlight()
         return
     elseif &previewwindow  " not preview window
         return
+    elseif !filereadable(expand(bufname('%')))  " not exists
+        return
     endif
 
     if !(getline(1) ==# '' && 1 == line('$'))
@@ -130,15 +132,22 @@ function BufNerdHighlight()
     endif
 endfunction
 
-function RefNerdTree()
+function RefNerdTree(do_refresh)
     if !IsNTOpen()
         return
     endif
-    :NERDTreeRefreshRoot
+    if a:do_refresh
+        if getbufvar('%', 'should_ref_nerd_tree', v:false)
+            :NERDTreeRefreshRoot
+        endif
+    else
+        call setbufvar('%', 'should_ref_nerd_tree', !filereadable(expand(bufname('%'))))
+    endif
 endfunction()
 
 autocmd BufEnter * call BufNerdHighlight()
-autocmd BufWritePost * call RefNerdTree()
+autocmd BufWrite * call RefNerdTree(v:false)
+autocmd BufWritePost * call RefNerdTree(v:true)
 
 " tagbar
 let g:tagbar_ctags_bin='ctags'
