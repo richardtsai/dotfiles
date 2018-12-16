@@ -4,8 +4,9 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'dyng/ctrlsf.vim'
 Plug 'vim-scripts/kwbdi.vim'
 Plug 'Shougo/echodoc.vim'
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
 Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
-Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 Plug 'ncm2/ncm2'
 Plug 'ncm2/ncm2-bufword'
 Plug 'ncm2/ncm2-path'
@@ -82,18 +83,6 @@ let g:LanguageClient_serverCommands = {
     \ 'go': ['go-langserver', '-maxparallelism=4', '-gocodecompletion'],
 \ }
 let g:LanguageClient_hasSnippetSupport = 0
-let g:LanguageClient_autoOpenLists = ['Locations', 'Symbols']
-
-" LeaderF
-let g:Lf_WindowHeight = 0.3
-let g:Lf_DefaultMode = 'FullPath'
-let g:Lf_WildIgnore = {
-    \ 'dir': ['.svn', '.git', '.hg'],
-    \ 'file': ['*.sw?', '~$*', '*.bak', '*.exe', '*.o', '*.so', '*.py[co]', '*.pb.h', '*.pb.cc']
-\ }
-let g:Lf_StlColorscheme = 'powerline'
-let g:Lf_UseVersionControlTool = 0
-let g:Lf_UseCache = 0
 
 " ncm2
 autocmd BufEnter * call ncm2#enable_for_buffer()
