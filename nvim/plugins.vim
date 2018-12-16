@@ -4,6 +4,8 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'dyng/ctrlsf.vim'
 Plug 'vim-scripts/kwbdi.vim'
 Plug 'Shougo/echodoc.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 Plug 'ncm2/ncm2'
@@ -82,7 +84,7 @@ let g:LanguageClient_serverCommands = {
     \ 'go': ['go-langserver', '-maxparallelism=4', '-gocodecompletion'],
 \ }
 let g:LanguageClient_hasSnippetSupport = 0
-let g:LanguageClient_autoOpenLists = ['Locations', 'Symbols']
+" let g:LanguageClient_autoOpenLists = ['Locations', 'Symbols']
 
 " LeaderF
 let g:Lf_WindowHeight = 0.3

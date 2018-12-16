@@ -38,13 +38,14 @@ nnoremap <leader><Space> :TagbarToggle<CR>:NERDTreeToggle<CR>:wincmd p<CR>:call 
 nnoremap <leader>u :UndotreeToggle<CR>
 " choose file
 let g:NERDTreeMapOpenInTab = '<C-t>' " prevent conflict
-nnoremap t :EnsureNormWin<CR>:LeaderfFile<CR>
+nnoremap t :EnsureNormWin<CR>:call fzf#vim#files('', {'source': 'rg --color never --no-messages --files'})<CR>
 " choose tag
-nnoremap <leader>t :EnsureNormWin<CR>:LeaderfBufTag<CR>
-nnoremap <leader>T :EnsureNormWin<CR>:LeaderfBufTagCword<CR>
+nnoremap <leader>t :EnsureNormWin<CR>:BTags<CR>
+nnoremap <leader>T :EnsureNormWin<CR>:exec 'BTags ' . expand('<cword>')<CR>
+autocmd FileType c,cpp,rust,python,go nnoremap <buffer> <leader>t :EnsureNormWin<CR>:call LanguageClient#textDocument_documentSymbol()<CR>
 " choose buffer
-nnoremap <leader>b :EnsureNormWin<CR>:LeaderfBuffer<CR>
-" choose function
+nnoremap <leader>b :EnsureNormWin<CR>:Buffers<CR>
+" choose function (deprecated)
 nnoremap <leader>f :EnsureNormWin<CR>:LeaderfFunction<CR>
 nnoremap <leader>F :EnsureNormWin<CR>:LeaderfFunctionCword<CR>
 " }}
@@ -72,7 +73,7 @@ let g:UltiSnipsExpandTrigger = '<S-TAB>'
 " clang-format works better
 let s:clang_format_py_path = expand($LLVM_PATH . '/share/clang/clang-format.py')
 if filereadable(s:clang_format_py_path)
-    autocmd FileType c,cpp command! -buffer -range=% Format execute '<line1>,<line2>py3file' . s:clang_format_py_path
+    autocmd FileType c,cpp,proto command! -buffer -range=% Format execute '<line1>,<line2>py3file' . s:clang_format_py_path
 endif
 " }}
 
