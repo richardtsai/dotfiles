@@ -40,9 +40,16 @@ nnoremap <leader>u :UndotreeToggle<CR>
 let g:NERDTreeMapOpenInTab = '<C-t>' " prevent conflict
 nnoremap t :EnsureNormWin<CR>:call fzf#vim#files('', {'source': 'rg --color never --no-messages --files'})<CR>
 " choose tag
-nnoremap <leader>t :EnsureNormWin<CR>:BTags<CR>
-nnoremap <leader>T :EnsureNormWin<CR>:exec 'BTags ' . expand('<cword>')<CR>
-autocmd FileType c,cpp,rust,python,go nnoremap <buffer> <leader>t :EnsureNormWin<CR>:call LanguageClient#textDocument_documentSymbol()<CR>
+" use LSP symbol list for supported languages
+function ShowSymbolList()
+    call EnsureInNormalWindow()
+    if has_key(g:LanguageClient_serverCommands, &syntax)
+        call LanguageClient#textDocument_documentSymbol()
+    else
+        :BTags
+    endif
+endfunction
+nnoremap <leader>t :call ShowSymbolList()<CR>
 " choose buffer
 nnoremap <leader>b :EnsureNormWin<CR>:Buffers<CR>
 " }}

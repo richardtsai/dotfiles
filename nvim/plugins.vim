@@ -76,18 +76,25 @@ let s:clangd = expand($LLVM_PATH . '/bin/clangd')
 if !executable(s:clangd)
     let s:clangd = 'clangd'
 endif
-let g:LanguageClient_serverCommands = {
-    \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-    \ 'cpp': [s:clangd, '-j=4', '-index', '-pch-storage=memory'],
-    \ 'python': ['pyls', '--log-file', '/tmp/pyls.log'],
-    \ 'go': ['go-langserver', '-maxparallelism=4', '-gocodecompletion'],
-\ }
+let g:LanguageClient_serverCommands = {}
+if executable(s:clangd)
+    let g:LanguageClient_serverCommands['c'] = [s:clangd, '-j=4', '-index', '-pch-storage=memory']
+    let g:LanguageClient_serverCommands['cpp'] = [s:clangd, '-j=4', '-index', '-pch-storage=memory']
+endif
+if executable('pyls')
+    let g:LanguageClient_serverCommands['python'] = ['pyls', '--log-file', '/tmp/pyls.log']
+endif
+if executable('rustup')
+    let g:LanguageClient_serverCommands['rust'] = ['rustup', 'run', 'stable', 'rls']
+endif
+if executable('go-langserver')
+    let g:LanguageClient_serverCommands['go'] = ['go-langserver', '-maxparallelism=4', '-gocodecompletion']
+endif
 let g:LanguageClient_hasSnippetSupport = 0
 
 " ncm2
 autocmd BufEnter * call ncm2#enable_for_buffer()
 set completeopt=noinsert,menuone,noselect
-let g:ncm2#filter = 'same_word'
 
 " nerdtree
 let g:NERDTreeWinSize = 40
