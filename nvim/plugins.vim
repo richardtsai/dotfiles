@@ -163,7 +163,25 @@ let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+let g:airline#extensions#tabline#buffer_idx_format = {
+  \ '1': 'Q|',
+  \ '2': 'W|',
+  \ '3': 'E|',
+  \ '4': 'R|',
+  \ '5': 'T|',
+  \ '6': 'Y|',
+  \ '7': 'U|',
+  \ '8': 'I|',
+  \ '9': 'O|',
+\}
 let g:airline#extensions#whitespace#enabled = 0
+call airline#parts#define('linenr_lite', {'raw': '%4l', 'accent': 'bold'})
+call airline#parts#define('maxlinenr_lite', {'raw': '/%L', 'accent': 'bold'})
+call airline#parts#define_function('langclistatus', 'LanguageClient_serverStatusMessage')
+let g:airline_section_z = airline#section#create([
+    \ '%3p%%', 'linenr_lite', 'maxlinenr_lite', ':%v'.g:airline_symbols.space, 'langclistatus'
+\ ])
 
 " cpp-enhanced-highlight
 let g:cpp_class_scope_highlight = 1

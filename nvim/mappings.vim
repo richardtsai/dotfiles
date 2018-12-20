@@ -24,6 +24,17 @@ nnoremap L :EnsureNormWin<CR>:bnext<CR>
 " keep-windows-buffer-delete
 nmap <leader>D <Plug>Kwbd
 
+" airline tabs
+nmap <M-q> <Plug>AirlineSelectTab1
+nmap <M-w> <Plug>AirlineSelectTab2
+nmap <M-e> <Plug>AirlineSelectTab3
+nmap <M-r> <Plug>AirlineSelectTab4
+nmap <M-t> <Plug>AirlineSelectTab5
+nmap <M-y> <Plug>AirlineSelectTab6
+nmap <M-u> <Plug>AirlineSelectTab7
+nmap <M-i> <Plug>AirlineSelectTab8
+nmap <M-o> <Plug>AirlineSelectTab9
+
 " move to character
 map <leader>s <Plug>(easymotion-s)
 " override builtin search
