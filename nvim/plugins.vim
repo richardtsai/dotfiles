@@ -9,6 +9,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
 Plug 'ncm2/ncm2'
 Plug 'ncm2/ncm2-bufword'
+Plug 'fgrsnau/ncm2-otherbuf', { 'branch': 'ncm2' }
 Plug 'ncm2/ncm2-path'
 Plug 'ncm2/ncm2-ultisnips'
 Plug 'scrooloose/nerdtree'
@@ -31,7 +32,7 @@ Plug 'cespare/vim-toml'
 call plug#end()
 
 " ale
-let g:ale_enabled = 0
+let g:ale_enabled = 1
 let g:ale_set_quickfix = 1
 let g:ale_linters = {
     \ 'cpp': ['cpplint', 'clangtidy'],
@@ -39,11 +40,6 @@ let g:ale_linters = {
 " cppcheck will check EVERYTHING in compdb, disable it for now
 " let g:ale_c_cppcheck_options = '--enable=warning,style,performance,portability,information,missingInclude --inline-suppr'
 " let g:ale_cpp_cppcheck_options = '--enable=warning,style,performance,portability,information,missingInclude --inline-suppr'
-let g:ale_cpp_clangtidy_executable = 'run-clang-tidy'
-if !executable(g:ale_cpp_clangtidy_executable)
-    let g:ale_cpp_clangtidy_executable = 'clang-tidy'
-endif
-let g:ale_cpp_clangtidy_checks = ['-*', 'boost-*', 'bugprune-*', 'cert-*', 'google-*', 'hicpp-*', 'misc-*', 'modernize-*', 'performance-*', 'readability-*']
 
 " auto-paris
 let g:AutoPairsMultilineClose = 0
@@ -78,8 +74,14 @@ if !executable(s:clangd)
 endif
 let g:LanguageClient_serverCommands = {}
 if executable(s:clangd)
-    let g:LanguageClient_serverCommands['c'] = [s:clangd, '-j=4', '-index', '-pch-storage=memory']
-    let g:LanguageClient_serverCommands['cpp'] = [s:clangd, '-j=4', '-index', '-pch-storage=memory']
+    let clangd_cmd = [
+      \ s:clangd,
+      \ '-j=4',
+      \ '-pch-storage=memory',
+      \ '-header-insertion-decorators=false',
+    \ ]
+    let g:LanguageClient_serverCommands['c'] = clangd_cmd
+    let g:LanguageClient_serverCommands['cpp'] = clangd_cmd
 endif
 if executable('pyls')
     let g:LanguageClient_serverCommands['python'] = ['pyls', '--log-file', '/tmp/pyls.log']
@@ -90,7 +92,7 @@ endif
 if executable('go-langserver')
     let g:LanguageClient_serverCommands['go'] = ['go-langserver', '-maxparallelism=4', '-gocodecompletion']
 endif
-let g:LanguageClient_hasSnippetSupport = 0
+let g:LanguageClient_hasSnippetSupport = 1
 
 " ncm2
 autocmd BufEnter * call ncm2#enable_for_buffer()

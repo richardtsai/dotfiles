@@ -66,9 +66,8 @@ nnoremap <leader>b :EnsureNormWin<CR>:Buffers<CR>
 " }}
 
 " superpower {{
-inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
+inoremap <silent> <expr> <CR> ncm2_ultisnips#expand_or("\<CR>", 'n')
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 nnoremap <leader>gt :call LanguageClient#textDocument_hover()<CR>
 nnoremap <leader>jd :call LanguageClient#textDocument_definition()<CR>
@@ -89,6 +88,7 @@ let g:UltiSnipsExpandTrigger = '<S-TAB>'
 " clang-format works better
 let s:clang_format_py_path = expand($LLVM_PATH . '/share/clang/clang-format.py')
 if filereadable(s:clang_format_py_path)
+    let g:clang_format_fallback_style = 'Google'
     autocmd FileType c,cpp,proto command! -buffer -range=% Format execute '<line1>,<line2>py3file' . s:clang_format_py_path
 endif
 " }}
