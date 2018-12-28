@@ -71,6 +71,23 @@ let g:ctrlsf_auto_focus = {"at": "start"}
 let g:echodoc#enable_at_startup = 1
 let g:echodoc#type = 'signature'
 
+" fzf
+let g:fzf_colors = {
+    \ 'fg':      ['fg', 'Normal'],
+    \ 'bg':      ['bg', 'Normal'],
+    \ 'hl':      ['fg', 'Comment'],
+    \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+    \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+    \ 'hl+':     ['fg', 'Statement'],
+    \ 'info':    ['fg', 'PreProc'],
+    \ 'border':  ['fg', 'Ignore'],
+    \ 'prompt':  ['fg', 'Conditional'],
+    \ 'pointer': ['fg', 'Exception'],
+    \ 'marker':  ['fg', 'Keyword'],
+    \ 'spinner': ['fg', 'Label'],
+    \ 'header':  ['fg', 'Comment'],
+\ }
+
 " LanguageClient
 let s:clangd = expand($LLVM_PATH . '/bin/clangd')
 if !executable(s:clangd)
@@ -88,7 +105,7 @@ if executable('rustup')
     let g:LanguageClient_serverCommands['rust'] = ['rustup', 'run', 'stable', 'rls']
 endif
 if executable('go-langserver')
-    let g:LanguageClient_serverCommands['go'] = ['go-langserver', '-maxparallelism=4', '-gocodecompletion']
+    let g:LanguageClient_serverCommands['go'] = ['bingo', '-maxparallelism=4', '-disable-diagnostics']
 endif
 let g:LanguageClient_hasSnippetSupport = 0
 
