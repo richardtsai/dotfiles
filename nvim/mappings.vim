@@ -24,6 +24,17 @@ nnoremap L :EnsureNormWin<CR>:bnext<CR>
 " keep-windows-buffer-delete
 nmap <leader>D <Plug>Kwbd
 
+" airline tabs
+nmap <M-q> <Plug>AirlineSelectTab1
+nmap <M-w> <Plug>AirlineSelectTab2
+nmap <M-e> <Plug>AirlineSelectTab3
+nmap <M-r> <Plug>AirlineSelectTab4
+nmap <M-t> <Plug>AirlineSelectTab5
+nmap <M-y> <Plug>AirlineSelectTab6
+nmap <M-u> <Plug>AirlineSelectTab7
+nmap <M-i> <Plug>AirlineSelectTab8
+nmap <M-o> <Plug>AirlineSelectTab9
+
 " move to character
 map <leader>s <Plug>(easymotion-s)
 " override builtin search
@@ -55,9 +66,8 @@ nnoremap <leader>b :EnsureNormWin<CR>:Buffers<CR>
 " }}
 
 " superpower {{
-inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
+inoremap <silent> <expr> <CR> ncm2_ultisnips#expand_or("\<CR>", 'n')
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 nnoremap <leader>gt :call LanguageClient#textDocument_hover()<CR>
 nnoremap <leader>jd :call LanguageClient#textDocument_definition()<CR>
@@ -66,6 +76,7 @@ nnoremap <leader>ji :call LanguageClient#textDocument_implementation()<CR>
 nnoremap <leader>jr :call LanguageClient#textDocument_references()<CR>
 nnoremap <leader>hl :call LanguageClient#textDocument_documentHighlight()<CR>
 nnoremap <leader>HL :call LanguageClient#clearDocumentHighlight()<CR>
+nnoremap <leader>gh :call langcliext#SwitchSourceHeader()<CR>
 nnoremap qq :pclose<CR>
 command! Format call LanguageClient#textDocument_formatting()
 " command! -range=% Format call LanguageClient#textDocument_rangeFormatting()
@@ -77,6 +88,7 @@ let g:UltiSnipsExpandTrigger = '<S-TAB>'
 " clang-format works better
 let s:clang_format_py_path = expand($LLVM_PATH . '/share/clang/clang-format.py')
 if filereadable(s:clang_format_py_path)
+    let g:clang_format_fallback_style = 'Google'
     autocmd FileType c,cpp,proto command! -buffer -range=% Format execute '<line1>,<line2>py3file' . s:clang_format_py_path
 endif
 " }}
