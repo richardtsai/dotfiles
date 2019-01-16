@@ -66,7 +66,7 @@ nnoremap <leader>b :EnsureNormWin<CR>:Buffers<CR>
 " }}
 
 " superpower {{
-inoremap <silent> <expr> <CR> ncm2_ultisnips#expand_or("\<CR>", 'n')
+inoremap <silent> <expr> <CR> pumvisible() ? ncm2_ultisnips#expand_or("\<CR>", 'n') : "\<CR>"
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 
 nnoremap <leader>gt :call LanguageClient#textDocument_hover()<CR>
@@ -82,6 +82,7 @@ command! Format call LanguageClient#textDocument_formatting()
 " command! -range=% Format call LanguageClient#textDocument_rangeFormatting()
 command! Rename call LanguageClient#textDocument_rename()
 command! Error call LanguageClient#explainErrorAtPoint()
+nnoremap <leader>qf :belowright copen<CR>
 
 let g:UltiSnipsExpandTrigger = '<S-TAB>'
 

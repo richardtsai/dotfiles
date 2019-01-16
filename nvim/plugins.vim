@@ -9,7 +9,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
 Plug 'ncm2/ncm2'
 Plug 'ncm2/ncm2-bufword'
-Plug 'fgrsnau/ncm2-otherbuf', { 'branch': 'ncm2' }
+Plug 'fgrsnau/ncm2-otherbuf'
 Plug 'ncm2/ncm2-path'
 Plug 'ncm2/ncm2-ultisnips'
 Plug 'scrooloose/nerdtree'
@@ -33,7 +33,6 @@ call plug#end()
 
 " ale
 let g:ale_enabled = 1
-let g:ale_set_quickfix = 1
 let g:ale_linters = {
     \ 'cpp': ['cpplint', 'clangtidy'],
 \ }
@@ -48,13 +47,9 @@ autocmd FileType text let g:AutoPairsMapCR = 0
 
 " ctrlsf
 if executable('rg')
-    let g:ackprg = 'rg --vimgrep'
     let g:ctrlsf_ackprg = 'rg'
-    let g:user_command_async = 1
 elseif executable('ag')
-    let g:ackprg = 'ag --vimgrep'
     let g:ctrlsf_ackprg = 'ag'
-    let g:user_command_async = 1
 endif
 
 let g:ctrlsf_extra_backend_args = {
@@ -182,25 +177,11 @@ let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
-let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline#extensions#tabline#buffer_idx_format = {
-  \ '1': 'Q|',
-  \ '2': 'W|',
-  \ '3': 'E|',
-  \ '4': 'R|',
-  \ '5': 'T|',
-  \ '6': 'Y|',
-  \ '7': 'U|',
-  \ '8': 'I|',
-  \ '9': 'O|',
-\}
 let g:airline#extensions#whitespace#enabled = 0
-call airline#parts#define('linenr_lite', {'raw': '%4l', 'accent': 'bold'})
-call airline#parts#define('maxlinenr_lite', {'raw': '/%L', 'accent': 'bold'})
-call airline#parts#define_function('langclistatus', 'LanguageClient_serverStatusMessage')
-let g:airline_section_z = airline#section#create([
-    \ '%3p%%', 'linenr_lite', 'maxlinenr_lite', ':%v'.g:airline_symbols.space, 'langclistatus'
-\ ])
+augroup AirlineLangcli
+    autocmd!
+    autocmd User AirlineAfterInit call langcli#InitAirline()
+augroup END
 
 " cpp-enhanced-highlight
 let g:cpp_class_scope_highlight = 1
@@ -211,11 +192,11 @@ let g:EasyMotion_smartcase = 1
 
 " multiple-cursors
 function! Multiple_cursors_before()
-	call ncm2#lock('vim-multiple-cursors')
+    call ncm2#lock('vim-multiple-cursors')
 endfunction
 
 function! Multiple_cursors_after()
-	call ncm2#unlock('vim-multiple-cursors')
+    call ncm2#unlock('vim-multiple-cursors')
 endfunction
 
 " one
