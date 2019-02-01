@@ -9,7 +9,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
 Plug 'ncm2/ncm2'
 Plug 'ncm2/ncm2-bufword'
-Plug 'fgrsnau/ncm2-otherbuf'
+Plug 'fgrsnau/ncm2-otherbuf', { 'branch': 'ncm2' }
 Plug 'ncm2/ncm2-path'
 Plug 'ncm2/ncm2-ultisnips'
 Plug 'scrooloose/nerdtree'
@@ -101,8 +101,8 @@ endif
 if executable('rustup')
     let g:LanguageClient_serverCommands['rust'] = ['rustup', 'run', 'stable', 'rls']
 endif
-if executable('go-langserver')
-    let g:LanguageClient_serverCommands['go'] = ['bingo', '-maxparallelism=4', '-disable-diagnostics']
+if executable('bingo')
+    let g:LanguageClient_serverCommands['go'] = ['bingo']
 endif
 let g:LanguageClient_hasSnippetSupport = 1
 

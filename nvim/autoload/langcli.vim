@@ -6,7 +6,7 @@ let s:loaded = 1
 augroup Langcli
     autocmd!
     autocmd User LanguageClientStarted call LanguageClient#registerHandlers({
-        \ 'textDocument/clangd.fileStatus': 'langclit#OnClangdFileStatusChanged'
+        \ 'textDocument/clangd.fileStatus': 'langcli#OnClangdFileStatusChanged'
     \ })
 augroup END
 

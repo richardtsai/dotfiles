@@ -76,7 +76,7 @@ nnoremap <leader>ji :call LanguageClient#textDocument_implementation()<CR>
 nnoremap <leader>jr :call LanguageClient#textDocument_references()<CR>
 nnoremap <leader>hl :call LanguageClient#textDocument_documentHighlight()<CR>
 nnoremap <leader>HL :call LanguageClient#clearDocumentHighlight()<CR>
-nnoremap <leader>gh :call langcliext#SwitchSourceHeader()<CR>
+nnoremap <leader>gh :call langcli#SwitchSourceHeader()<CR>
 nnoremap qq :pclose<CR>
 command! Format call LanguageClient#textDocument_formatting()
 " command! -range=% Format call LanguageClient#textDocument_rangeFormatting()
