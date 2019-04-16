@@ -66,8 +66,14 @@ nnoremap <leader>b :EnsureNormWin<CR>:Buffers<CR>
 " }}
 
 " superpower {{
-inoremap <silent> <expr> <CR> pumvisible() ? ncm2_ultisnips#expand_or("\<CR>", 'n') : "\<CR>"
+inoremap <silent> <expr> <CR> pumvisible() ? ncm2_neosnippet#expand_or("\<CR>", 'n') : "\<CR>"
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+
+imap <expr> <C-j> neosnippet#jumpable() ? "\<Plug>(neosnippet_jump)" : "\<C-j>"
+smap <expr> <C-j> neosnippet#jumpable() ? "\<Plug>(neosnippet_jump)" : "\<C-j>"
+imap <S-TAB> <Plug>(neosnippet_expand)
+smap <S-TAB> <Plug>(neosnippet_expand)
+xmap <S-TAB> <Plug>(neosnippet_expand_target)
 
 nnoremap <leader>gt :call LanguageClient#textDocument_hover()<CR>
 nnoremap <leader>jd :call LanguageClient#textDocument_definition()<CR>

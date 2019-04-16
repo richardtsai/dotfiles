@@ -9,13 +9,14 @@ Plug 'junegunn/fzf.vim'
 Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
 Plug 'ncm2/ncm2'
 Plug 'ncm2/ncm2-bufword'
+Plug 'ncm2/ncm2-neosnippet'
 Plug 'fgrsnau/ncm2-otherbuf', { 'branch': 'ncm2' }
 Plug 'ncm2/ncm2-path'
-Plug 'ncm2/ncm2-ultisnips'
+Plug 'Shougo/neosnippet.vim'
+Plug 'Shougo/neosnippet-snippets'
 Plug 'scrooloose/nerdtree'
 Plug 'roxma/nvim-yarp'
 Plug 'majutsushi/tagbar'
-Plug 'SirVer/ultisnips'
 Plug 'mbbill/undotree'
 Plug 'vim-airline/vim-airline'
 Plug 'octol/vim-cpp-enhanced-highlight'
@@ -25,7 +26,7 @@ Plug 'rakr/vim-one'
 Plug 'hynek/vim-python-pep8-indent'
 Plug 'kshenoy/vim-signature'
 Plug 'mhinz/vim-signify'
-Plug 'honza/vim-snippets'
+" Plug 'honza/vim-snippets'
 Plug 'tpope/vim-surround'
 Plug 'cespare/vim-toml'
 " Plug 'lervag/vimtex'
@@ -34,7 +35,7 @@ call plug#end()
 " ale
 let g:ale_enabled = 1
 let g:ale_linters = {
-    \ 'cpp': ['cpplint', 'clangtidy'],
+    \ 'cpp': ['cpplint'],
 \ }
 " cppcheck will check EVERYTHING in compdb, disable it for now
 " let g:ale_c_cppcheck_options = '--enable=warning,style,performance,portability,information,missingInclude --inline-suppr'
@@ -91,6 +92,9 @@ if executable(s:clangd)
       \ '-j=4',
       \ '-pch-storage=memory',
       \ '-header-insertion-decorators=false',
+      \ '-clang-tidy=true',
+      \ '-suggest-missing-includes=false',
+      \ '-index=false',
     \ ]
     let g:LanguageClient_serverCommands['c'] = clangd_cmd
     let g:LanguageClient_serverCommands['cpp'] = clangd_cmd
@@ -109,6 +113,13 @@ let g:LanguageClient_hasSnippetSupport = 1
 " ncm2
 autocmd BufEnter * call ncm2#enable_for_buffer()
 set completeopt=noinsert,menuone,noselect
+" let g:ncm2#matcher = 'substrfuzzy'
+
+" neosnippet
+if has('conceal')
+    set conceallevel=2 concealcursor=niv
+endif
+let g:neosnippet#snippets_directory = expand('~/.config/nvim/nsnips')
 
 " nerdtree
 let g:NERDTreeWinSize = 40
