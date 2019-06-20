@@ -29,7 +29,7 @@ endif
 
 autocmd FileType javascript setlocal tabstop=2 shiftwidth=2 softtabstop=2 colorcolumn=80
 autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4 colorcolumn=79
-autocmd FileType c,cpp setlocal tabstop=2 shiftwidth=2 softtabstop=2 colorcolumn=80
+autocmd FileType c,cpp,java setlocal tabstop=2 shiftwidth=2 softtabstop=2 colorcolumn=80
 autocmd FileType html,htmldjango,xhtml,haml setlocal tabstop=2 shiftwidth=2 softtabstop=2 textwidth=0
 autocmd FileType crontab set nowritebackup
 
