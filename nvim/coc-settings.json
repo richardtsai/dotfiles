@@ -1,0 +1,24 @@
+{
+    "languageserver": {
+        "clangd": {
+            "command": "clangd",
+            "args": [
+                "-j=4",
+                "-pch-storage=memory",
+                "-header-insertion-decorators=false",
+                "-clang-tidy=true",
+                "-suggest-missing-includes=false",
+                "-index=false"
+            ],
+            "initializationOptions": {
+                "clangdFileStatus": true
+            },
+            "rootPatterns": ["compile_flags.txt", "compile_commands.json", ".vim/", ".git/", ".hg/"],
+            "filetypes": ["c", "cpp", "objc", "objcpp"]
+        }
+    },
+    "list.maxHeight": 30,
+    "list.maxPreviewHeight": 8,
+    "diagnostic.virtualText": true,
+    "suggest.echodocSupport": true
+}

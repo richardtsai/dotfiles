@@ -5,9 +5,9 @@ let s:loaded = 1
 
 augroup Langcli
     autocmd!
-    autocmd User LanguageClientStarted call LanguageClient#registerHandlers({
-        \ 'textDocument/clangd.fileStatus': 'langcli#OnClangdFileStatusChanged'
-    \ })
+    autocmd User CocNvimInit call CocRegistNotification(
+        \ 'clangd', 'textDocument/clangd.fileStatus', function('langcli#OnClangdFileStatusChanged')
+    \ )
 augroup END
 
 function langcli#InitAirline() abort
@@ -20,18 +20,19 @@ function langcli#InitAirline() abort
 endfunction
 
 function langcli#SwitchSourceHeader() abort
-    let this_uri = 'file://' . LSP#filename()
-    function! s:switch(resp) abort
-        if !has_key(a:resp, 'result')
-            return
-        endif
-        let filename = substitute(a:resp['result'], '^file://', '', '')
+    let filename = expand('<afile>:p')
+    if !filename
+        let filename = expand('%:p')
+    endif
+    let this_uri = 'file://' . filename
+    function! s:switch(error, resp) abort
+        let filename = substitute(a:resp, '^file://', '', '')
         if !filereadable(filename)
             return
         endif
         exe 'edit ' . filename
     endfunction
-    call LanguageClient#Call('textDocument/switchSourceHeader', {'uri': this_uri}, funcref('s:switch'))
+    call CocRequestAsync('clangd', 'textDocument/switchSourceHeader', {'uri': this_uri}, funcref('s:switch'))
 endfunction
 
 let s:clangdFileStatusMap = {}
@@ -48,6 +49,6 @@ function! langcli#GetStatus() abort
     if has_key(s:clangdFileStatusMap, l:buf)
         return 'clangd:' . s:clangdFileStatusMap[l:buf]
     else
-        return LanguageClient_serverStatusMessage()
+        return get(g:, 'coc_status', '')
     endif
 endfunction

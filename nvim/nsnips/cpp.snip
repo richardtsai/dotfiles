@@ -1,0 +1,38 @@
+snippet once
+options head
+    #pragma once
+    ${0}
+
+snippet ns
+options head
+    namespace ${1:#:name} {
+    ${0:TARGET}
+    }  // namespace $1
+
+snippet ans
+options head
+    namespace {
+    ${0:TARGET}
+    }  // anonymous namespace
+
+snippet pragmaAllow
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-W${1:deprecated-declarations}"
+    ${0:TARGET}
+    #pragma GCC diagnostic pop
+
+snippet Inc
+options head
+    #include "${1:`snip_support#CppDefaultIncludeHeader()`}"${0}
+
+snippet IncGtest
+options head
+    #include ${1:`snip_support#CppIncludeCommon('gtest')`}${0}
+
+snippet IncGmock
+options head
+    #include ${1:`snip_support#CppIncludeCommon('gmock')`}${0}
+
+snippet IncPb
+options head
+    #include ${1:`snip_support#CppIncludeCommon('protobuf')`}${0}

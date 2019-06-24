@@ -1,17 +1,12 @@
 silent! call plug#begin('~/.config/nvim/bundle')
 Plug 'w0rp/ale'
 Plug 'jiangmiao/auto-pairs'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'dyng/ctrlsf.vim'
 Plug 'vim-scripts/kwbdi.vim'
 Plug 'Shougo/echodoc.vim'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
-Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
-Plug 'ncm2/ncm2'
-Plug 'ncm2/ncm2-bufword'
-Plug 'ncm2/ncm2-neosnippet'
-Plug 'fgrsnau/ncm2-otherbuf', { 'branch': 'ncm2' }
-Plug 'ncm2/ncm2-path'
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'scrooloose/nerdtree'
@@ -27,10 +22,8 @@ Plug 'hynek/vim-python-pep8-indent'
 Plug 'derekwyatt/vim-scala'
 Plug 'kshenoy/vim-signature'
 Plug 'mhinz/vim-signify'
-" Plug 'honza/vim-snippets'
 Plug 'tpope/vim-surround'
 Plug 'cespare/vim-toml'
-" Plug 'lervag/vimtex'
 call plug#end()
 
 " ale
@@ -46,6 +39,10 @@ let g:ale_linters = {
 let g:AutoPairsMultilineClose = 0
 autocmd FileType * let g:AutoPairsMapCR = 1
 autocmd FileType text let g:AutoPairsMapCR = 0
+
+" coc.nvim
+let g:has_language_server = {"c": 1, "cpp": 1, "objc": 1, "objcpp": 1}
+let g:coc_global_extensions = ['coc-emmet', 'coc-highlight', 'coc-json', 'coc-neosnippet', 'coc-python', 'coc-snippets']
 
 " ctrlsf
 if executable('rg')
@@ -111,14 +108,13 @@ if executable('bingo')
 endif
 let g:LanguageClient_hasSnippetSupport = 1
 
-" ncm2
-autocmd BufEnter * call ncm2#enable_for_buffer()
-set completeopt=noinsert,menuone,noselect
-" let g:ncm2#matcher = 'substrfuzzy'
-
 " neosnippet
 if has('conceal')
     set conceallevel=2 concealcursor=niv
+    augroup ConcealDisableForJson
+    autocmd!
+    autocmd FileType json setlocal conceallevel=0
+    augroup END
 endif
 let g:neosnippet#snippets_directory = expand('~/.config/nvim/nsnips')
 
@@ -202,18 +198,7 @@ let g:cpp_member_variable_highlight = 1
 " easymotion
 let g:EasyMotion_smartcase = 1
 
-" multiple-cursors
-function! Multiple_cursors_before()
-    call ncm2#lock('vim-multiple-cursors')
-endfunction
-
-function! Multiple_cursors_after()
-    call ncm2#unlock('vim-multiple-cursors')
-endfunction
-
 " one
 let g:one_allow_italics = 1
 set background=dark
 colorscheme one
-" set t_8b=[48;2;%lu;%lu;%lum
-" set t_8f=[38;2;%lu;%lu;%lum
