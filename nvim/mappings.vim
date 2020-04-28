@@ -54,8 +54,8 @@ nnoremap t :EnsureNormWin<CR>:call fzf#vim#files('', {'source': 'rg --color neve
 " use LSP symbol list for supported languages
 function ShowSymbolList()
     call EnsureInNormalWindow()
-    if has_key(g:LanguageClient_serverCommands, &syntax)
-        call LanguageClient#textDocument_documentSymbol()
+    if has_key(g:has_language_server, &syntax)
+        CocList outline
     else
         :BTags
     endif
@@ -66,31 +66,39 @@ nnoremap <leader>b :EnsureNormWin<CR>:Buffers<CR>
 " }}
 
 " superpower {{
-inoremap <silent> <expr> <CR> pumvisible() ? ncm2_neosnippet#expand_or("\<CR>", 'n') : "\<CR>"
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+	  \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ "\<TAB>"
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-imap <expr> <C-j> neosnippet#jumpable() ? "\<Plug>(neosnippet_jump)" : "\<C-j>"
-smap <expr> <C-j> neosnippet#jumpable() ? "\<Plug>(neosnippet_jump)" : "\<C-j>"
-imap <S-TAB> <Plug>(neosnippet_expand)
-smap <S-TAB> <Plug>(neosnippet_expand)
-xmap <S-TAB> <Plug>(neosnippet_expand_target)
+vmap <C-j> <Plug>(coc-snippets-select)
+imap <C-j> <Plug>(coc-snippets-expand-jump)
 
-nnoremap <leader>gt :call LanguageClient#textDocument_hover()<CR>
-nnoremap <leader>jd :call LanguageClient#textDocument_definition()<CR>
+inoremap <silent><expr> <leader><TAB> coc#refresh()
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
+" position. Coc only does snippet and additional edit on confirm.
+if exists('*complete_info')
+  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? coc#_select_confirm() : 
+                                                            \"\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+else
+  inoremap <expr> <cr> pumvisible() ? coc#_select_confirm() : 
+                                     \"\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+endif
+
+nnoremap <leader>gt :call CocAction('doHover')<CR>
+nmap <leader>jd <Plug>(coc-definition)
 autocmd FileType qf nmap <buffer> <CR> <CR>:lcl<CR>
-nnoremap <leader>ji :call LanguageClient#textDocument_implementation()<CR>
-nnoremap <leader>jr :call LanguageClient#textDocument_references()<CR>
-nnoremap <leader>hl :call LanguageClient#textDocument_documentHighlight()<CR>
-nnoremap <leader>HL :call LanguageClient#clearDocumentHighlight()<CR>
-nnoremap <leader>gh :call langcli#SwitchSourceHeader()<CR>
+nmap <leader>ji <Plug>(coc-implementation)
+nmap <leader>jr <Plug>(coc-references)
+nnoremap <leader>hl :call CocActionAsync('highlight')<CR>
+nnoremap <leader>gh :CocCommand clangd.switchSourceHeader<CR>
 nnoremap qq :pclose<CR>
-command! Format call LanguageClient#textDocument_formatting()
-" command! -range=% Format call LanguageClient#textDocument_rangeFormatting()
-command! Rename call LanguageClient#textDocument_rename()
-command! Error call LanguageClient#explainErrorAtPoint()
+command! -nargs=0 Format :call CocAction('format')
+command! Rename call CocAction('rename')
+command! Error call CocAction('diagnosticInfo')
 nnoremap <leader>qf :belowright copen<CR>
-
-let g:UltiSnipsExpandTrigger = '<S-TAB>'
 
 " clang-format works better
 let s:clang_format_py_path = expand($LLVM_PATH . '/share/clang/clang-format.py')

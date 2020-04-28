@@ -1,6 +1,6 @@
 " environment-specific settings, might alter behaviors of other initialization
 " processes so need to load first
-source <sfile>:h/local.vim
+silent! source <sfile>:h/local.vim
 " settings of nvim core functions
 source <sfile>:h/core.vim
 " plugin loadding and plugin-specific settings
@@ -11,4 +11,4 @@ source <sfile>:h/mappings.vim
 source <sfile>:h/tagbar_type_defs.vim
 
 " load again to override settings
-source <sfile>:h/local.vim
+silent! source <sfile>:h/local.vim

@@ -1,27 +1,8 @@
 priority 0
 
-snippet once "Include header once only guard"
-#ifndef ${1:`!p
-if not snip.c:
-	import os.path, string
-	blade_root = os.path.dirname(os.path.abspath(path))
-	while True:
-		if os.path.exists(os.path.join(blade_root, 'BLADE_ROOT')):
-			break
-		if blade_root == '/':
-			blade_root = os.getcwd()
-			break
-		blade_root = os.path.dirname(blade_root)
-	rel_path = os.path.relpath(os.path.abspath(path), blade_root)
-	name = re.sub(r'[^A-Za-z0-9]+', '_', rel_path)
-	snip.rv = name.upper() + '_'
-else:
-	snip.rv = snip.c`}
-#define $1
+snippet once "pragma once"
+#pragma once
 
-${VISUAL}${0}
-
-#endif  // $1
 endsnippet
 
 snippet #ifndef "#ifndef ... #define ... #endif"
@@ -31,5 +12,5 @@ snippet #ifndef "#ifndef ... #define ... #endif"
 endsnippet
 
 snippet Inc "Include non-system headers"
-#include "${1:`!p snip.rv = snip.basename.rstrip('_test')`}.h"
+#include "${1:`!v substitute(expand('%:t:r'), '_test$', '', '')`}.h"
 endsnippet
