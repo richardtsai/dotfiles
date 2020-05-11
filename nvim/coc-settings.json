@@ -38,5 +38,6 @@
         "--index",
         "-j=7"
     ],
-    "clangd.semanticHighlighting": true
+    "clangd.semanticHighlighting": true,
+    "highlight.colors.enable": false
 }

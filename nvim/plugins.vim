@@ -25,6 +25,8 @@ Plug 'mhinz/vim-signify'
 Plug 'honza/vim-snippets'
 Plug 'tpope/vim-surround'
 Plug 'cespare/vim-toml'
+
+Plug '~/.config/nvim/my/shortcuts'
 call plug#end()
 
 " ale
@@ -40,6 +42,10 @@ let g:ale_linters = {
 let g:has_language_server = {"c": 1, "cpp": 1, "objc": 1, "objcpp": 1, "python": 1}
 let g:coc_global_extensions = ['coc-emmet', 'coc-highlight', 'coc-json', 'coc-python', 'coc-snippets', 'coc-pairs', 'coc-clangd']
 highlight link CocHighlightText Pmenu
+augroup CocAu
+    autocmd!
+    autocmd CursorHold * silent call CocActionAsync('highlight')
+augroup end
 
 " ctrlsf
 if executable('rg')
