@@ -1,19 +1,22 @@
 silent! call plug#begin('~/.config/nvim/bundle')
 Plug 'w0rp/ale'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'antoinemadec/coc-fzf'
 Plug 'dyng/ctrlsf.vim'
 Plug 'vim-scripts/kwbdi.vim'
 Plug 'Shougo/echodoc.vim'
-Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'itchyny/lightline.vim'
+Plug 'mengelbrecht/lightline-bufferline'
 Plug 'scrooloose/nerdtree'
-Plug 'roxma/nvim-yarp'
+" Plug 'roxma/nvim-yarp'
 Plug 'joshdick/onedark.vim'
-Plug 'majutsushi/tagbar'
+" Plug 'majutsushi/tagbar'
 Plug 'mbbill/undotree'
-Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline'
 Plug 'ryanoasis/vim-devicons'
-Plug 'bfrg/vim-cpp-modern'
+" Plug 'bfrg/vim-cpp-modern'
 Plug 'Lokaltog/vim-easymotion'
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'terryma/vim-multiple-cursors'
@@ -25,14 +28,17 @@ Plug 'mhinz/vim-signify'
 Plug 'honza/vim-snippets'
 Plug 'tpope/vim-surround'
 Plug 'cespare/vim-toml'
+Plug 'liuchengxu/vista.vim'
 
 Plug '~/.config/nvim/my/shortcuts'
+Plug '~/.config/nvim/my/copy'
 call plug#end()
 
 " ale
-let g:ale_enabled = 1
+let g:ale_enabled = 0
 let g:ale_linters = {
     \ 'cpp': ['cpplint'],
+    \ 'python': [],
 \ }
 " cppcheck will check EVERYTHING in compdb, disable it for now
 " let g:ale_c_cppcheck_options = '--enable=warning,style,performance,portability,information,missingInclude --inline-suppr'
@@ -40,7 +46,7 @@ let g:ale_linters = {
 
 " coc.nvim
 let g:has_language_server = {"c": 1, "cpp": 1, "objc": 1, "objcpp": 1, "python": 1}
-let g:coc_global_extensions = ['coc-emmet', 'coc-highlight', 'coc-json', 'coc-python', 'coc-snippets', 'coc-pairs', 'coc-clangd']
+let g:coc_global_extensions = ['coc-highlight', 'coc-json', 'coc-python', 'coc-pairs', 'coc-clangd']
 highlight link CocHighlightText Pmenu
 augroup CocAu
     autocmd!
@@ -81,8 +87,34 @@ let g:fzf_colors = {
     \ 'header':  ['fg', 'Comment'],
 \ }
 
+" lightline
+function! CocCurrentFunction()
+    return get(b:, 'coc_current_function', '')
+endfunction
+let g:lightline = {
+    \ 'colorscheme': 'one',
+    \ 'active': {
+    \   'left': [['mode', 'paste'],
+    \            ['cocstatus', 'currentfunction', 'readonly', 'filename', 'modified']]
+    \ },
+    \ 'tabline': {
+    \   'left': [['buffers']],
+    \   'right': [['close']]
+    \ },
+    \ 'component_expand': {'buffers': 'lightline#bufferline#buffers'},
+    \ 'component_type': {'buffers': 'tabsel'},
+    \ 'component_function': {
+    \   'cocstatus': 'coc#status',
+    \   'currentfunction': 'CocCurrentFunction'
+    \ },
+  \ }
+let g:lightline#bufferline#enable_devicons = 1
+let g:lightline#bufferline#unicode_symbols = 1
+let g:lightline#bufferline#smart_path = 0
+let g:lightline#bufferline#modified = " \U1F589 "
+
 " nerdtree
-let g:NERDTreeWinSize = 38
+let g:NERDTreeWinSize = 40
 
 function IsNTOpen()
   return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
@@ -165,3 +197,36 @@ highlight link LspCxxHlSymNamespace Identifier
 " one
 let g:onedark_terminal_italics = 1
 colorscheme onedark
+
+" vista
+let g:vista_sidebar_keepalt = 1
+let g:vista_stay_on_open = 0
+let g:vista_executive_for = {
+    \ 'c': 'coc',
+    \ 'cpp': 'coc',
+    \ 'python': 'coc',
+    \ 'rust': 'coc',
+\ }
+let g:vista_sidebar_width = 40
+let g:vista#renderer#enable_icon = 1
+let g:vista#renderer#icons = {
+    \ 'func': "\uf794",
+    \ 'function': "\uf794",
+    \ 'functions': "\uf794",
+    \ 'constructor': "\uf794",
+    \ 'method': "\uf794",
+    \ 'field': "\uf6a6",
+    \ 'fields': "\uf6a6",
+    \ 'var': "\uf6a6",
+    \ 'variable': "\uf6a6",
+    \ 'variables': "\uf6a6",
+\ }
+function! s:all_listed_bufs_closed(except_winid)
+    for win in getwininfo()
+        if win.winid != a:except_winid && buflisted(win.bufnr)
+            return v:false
+        endif
+    endfor
+    return v:true
+endfunction
+autocmd WinClosed * if s:all_listed_bufs_closed(expand('<afile>')) | qall | endif

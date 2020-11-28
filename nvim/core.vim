@@ -6,6 +6,7 @@ set showmatch
 set matchtime=1
 set matchpairs+=<:>
 set laststatus=2
+set showtabline=2
 set expandtab
 set shiftwidth=4
 set tabstop=4
@@ -33,10 +34,10 @@ autocmd FileType c,cpp setlocal tabstop=2 shiftwidth=2 softtabstop=2 colorcolumn
 autocmd FileType html,htmldjango,xhtml,haml setlocal tabstop=2 shiftwidth=2 softtabstop=2 textwidth=0
 autocmd FileType crontab set nowritebackup
 
-autocmd BufReadPost *
-  \ if line("'\"") > 1 && line("'\"") <= line("$") |
-  \   exe "normal! g`\"" |
-  \ endif
+" autocmd BufReadPost *
+"   \ if line("'\"") > 1 && line("'\"") <= line("$") |
+"   \   exe "normal! g`\"" |
+"   \ endif
 
 if !exists(":DiffOrig")
   command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis

@@ -45,22 +45,25 @@ map <leader>N <Plug>(easymotion-prev)
 
 " panels {{
 " main layout
-nnoremap <leader><Space> :TagbarToggle<CR>:NERDTreeToggle<CR>:wincmd p<CR>:call BufNerdHighlight()<CR>
+" nnoremap <leader><Space> :TagbarToggle<CR>:NERDTreeToggle<CR>:wincmd p<CR>:call BufNerdHighlight()<CR>
+nnoremap <leader><Space> :Vista!!<CR>:NERDTreeToggle<CR>:wincmd p<CR>:call BufNerdHighlight()<CR>
 nnoremap <leader>u :UndotreeToggle<CR>
 " choose file
 let g:NERDTreeMapOpenInTab = '<C-t>' " prevent conflict
-nnoremap t :EnsureNormWin<CR>:call fzf#vim#files('', {'source': 'rg --color never --no-messages --files'})<CR>
+" nnoremap t :EnsureNormWin<CR>:call fzf#vim#files('', {'source': 'rg --color never --no-messages --files'})<CR>
+nnoremap t :EnsureNormWin<CR>:Files<CR>
 " choose tag
 " use LSP symbol list for supported languages
 function ShowSymbolList()
     call EnsureInNormalWindow()
     if has_key(g:has_language_server, &syntax)
-        CocList outline
+        CocFzfList outline
     else
         :BTags
     endif
 endfunction
 nnoremap <leader>t :call ShowSymbolList()<CR>
+" nnoremap <leader>t :CocFzfList outline<CR>
 " choose buffer
 nnoremap <leader>b :EnsureNormWin<CR>:Buffers<CR>
 " }}
@@ -87,7 +90,7 @@ else
                                      \"\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 endif
 
-nnoremap <leader>gt :call CocAction('doHover')<CR>
+nnoremap <leader>gt :call CocActionAsync('doHover')<CR>
 nmap <leader>jd <Plug>(coc-definition)
 autocmd FileType qf nmap <buffer> <CR> <CR>:lcl<CR>
 nmap <leader>ji <Plug>(coc-implementation)
@@ -95,9 +98,10 @@ nmap <leader>jr <Plug>(coc-references)
 nnoremap <leader>hl :call CocActionAsync('highlight')<CR>
 nnoremap <leader>gh :CocCommand clangd.switchSourceHeader<CR>
 nnoremap qq :pclose<CR>
-command! -nargs=0 Format :call CocAction('format')
-command! Rename call CocAction('rename')
-command! Error call CocAction('diagnosticInfo')
+command! -nargs=0 Format :call CocActionAsync('format')
+command! Rename call CocActionAsync('rename')
+" command! Error call CocAction('diagnosticInfo')
+command! Error :CocFzfList diagnostics --current-buf
 nnoremap <leader>qf :belowright copen<CR>
 
 " clang-format works better

@@ -1,7 +1,7 @@
 {
     "diagnostic.virtualText": true,
     "suggest.echodocSupport": true,
-    "suggest.acceptSuggestionOnCommitCharacter": true,
+    // "suggest.acceptSuggestionOnCommitCharacter": true,
     "suggest.completionItemKindLabels": {
         "keyword": "\uf1de",
         "variable": "\ue79b",
@@ -30,14 +30,25 @@
         "default": "\uf29c"
     },
     "clangd.arguments": [
+        // "-log=verbose",
+        "--query-driver=/usr/bin/*",
+        "--ranking-model=decision_forest",
         "--all-scopes-completion=false",
+        "--async-preamble",
         "--background-index",
         "--clang-tidy",
         "--cross-file-rename",
         "--header-insertion=never",
         "--index",
+        "--pch-storage=memory",
+        // "--input-mirror-file=/tmp/clangd.log",
+        // "--pretty",
         "-j=7"
     ],
+    "clangd.fallbackFlags": ["-std=c++17", "-Wall", "-Werror", "-isystem."],
     "clangd.semanticHighlighting": true,
+    // "clangd.compilationDatabasePath": "/data/richardcai/QQMail/",
+    "python.jediEnabled": true,
+    // "http.proxy": "http://devnet-proxy.oa.com:8080",
     "highlight.colors.enable": false
 }
