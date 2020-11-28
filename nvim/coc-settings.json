@@ -1,7 +1,7 @@
 {
+    "coc.preferences.currentFunctionSymbolAutoUpdate": true,
     "diagnostic.virtualText": true,
     "suggest.echodocSupport": true,
-    "suggest.acceptSuggestionOnCommitCharacter": true,
     "suggest.completionItemKindLabels": {
         "keyword": "\uf1de",
         "variable": "\ue79b",
@@ -30,14 +30,18 @@
         "default": "\uf29c"
     },
     "clangd.arguments": [
-        "--all-scopes-completion=false",
+        "--query-driver=/usr/bin/*",
+        "--all-scopes-completion=true",
         "--background-index",
         "--clang-tidy",
-        "--cross-file-rename",
         "--header-insertion=never",
-        "--index",
+        "--pch-storage=memory",
         "-j=7"
     ],
-    "clangd.semanticHighlighting": true,
+    "clangd.fallbackFlags": ["-std=c++17", "-Wall", "-Werror", "-isystem."],
+    // "clangd.semanticHighlighting": true,
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": ["-l", "79"],
+    "python.linting.flake8Enabled": true,
     "highlight.colors.enable": false
 }

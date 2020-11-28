@@ -7,8 +7,6 @@ source <sfile>:h/core.vim
 source <sfile>:h/plugins.vim
 " key mappings
 source <sfile>:h/mappings.vim
-" tagbar type definitions to work with u-ctags plugins
-source <sfile>:h/tagbar_type_defs.vim
 
 " load again to override settings
 silent! source <sfile>:h/local.vim

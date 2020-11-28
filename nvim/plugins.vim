@@ -1,47 +1,38 @@
 silent! call plug#begin('~/.config/nvim/bundle')
-Plug 'w0rp/ale'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'feat/lsp-316', 'do': 'yarn install --frozen-lockfile'}
+Plug 'antoinemadec/coc-fzf'
 Plug 'dyng/ctrlsf.vim'
+Plug 'lambdalisue/fern.vim'
+Plug 'lambdalisue/fern-renderer-nerdfont.vim'
+Plug 'antoinemadec/FixCursorHold.nvim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 Plug 'vim-scripts/kwbdi.vim'
 Plug 'Shougo/echodoc.vim'
-Plug 'junegunn/fzf'
-Plug 'junegunn/fzf.vim'
-Plug 'scrooloose/nerdtree'
-Plug 'roxma/nvim-yarp'
+Plug 'itchyny/lightline.vim'
+Plug 'mengelbrecht/lightline-bufferline'
+Plug 'lambdalisue/nerdfont.vim'
 Plug 'joshdick/onedark.vim'
-Plug 'majutsushi/tagbar'
 Plug 'mbbill/undotree'
-Plug 'vim-airline/vim-airline'
-Plug 'ryanoasis/vim-devicons'
-Plug 'bfrg/vim-cpp-modern'
+Plug 'bfrg/vim-cpp-modern', {'for': ['c', 'cpp']}
 Plug 'Lokaltog/vim-easymotion'
-Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'terryma/vim-multiple-cursors'
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'hynek/vim-python-pep8-indent'
-Plug 'derekwyatt/vim-scala'
+Plug 'derekwyatt/vim-scala', {'for': 'scala'}
 Plug 'kshenoy/vim-signature'
 Plug 'mhinz/vim-signify'
 Plug 'honza/vim-snippets'
 Plug 'tpope/vim-surround'
-Plug 'cespare/vim-toml'
+Plug 'cespare/vim-toml', {'for': 'toml'}
+Plug 'liuchengxu/vista.vim'
 
 Plug '~/.config/nvim/my/shortcuts'
+Plug '~/.config/nvim/my/copy'
 call plug#end()
-
-" ale
-let g:ale_enabled = 1
-let g:ale_linters = {
-    \ 'cpp': ['cpplint'],
-\ }
-" cppcheck will check EVERYTHING in compdb, disable it for now
-" let g:ale_c_cppcheck_options = '--enable=warning,style,performance,portability,information,missingInclude --inline-suppr'
-" let g:ale_cpp_cppcheck_options = '--enable=warning,style,performance,portability,information,missingInclude --inline-suppr'
 
 " coc.nvim
 let g:has_language_server = {"c": 1, "cpp": 1, "objc": 1, "objcpp": 1, "python": 1}
-let g:coc_global_extensions = ['coc-emmet', 'coc-highlight', 'coc-json', 'coc-python', 'coc-snippets', 'coc-pairs', 'coc-clangd']
-highlight link CocHighlightText Pmenu
+let g:coc_global_extensions = ['coc-highlight', 'coc-json', 'coc-pairs', 'coc-clangd']
 augroup CocAu
     autocmd!
     autocmd CursorHold * silent call CocActionAsync('highlight')
@@ -59,6 +50,39 @@ let g:ctrlsf_extra_backend_args = {
     \ 'rg': '-g !\*.pb.h -g !\*.pb.cc',
 \ }
 let g:ctrlsf_auto_focus = {"at": "start"}
+
+" fern
+function! s:fern_reveal_current() abort
+    if !buflisted(bufnr('%'))
+        return
+    endif
+    let current = expand('%:p')
+    if filereadable(l:current)
+        execute 'FernDo -stay FernReveal ' . fnameescape(l:current)
+    endif
+endfunction
+function! s:fern_init() abort
+    setlocal nonumber
+    nmap <buffer><expr><nowait> <cr>
+	      \ fern#smart#leaf(
+	      \   "\<Plug>(fern-action-open)",
+	      \   "\<Plug>(fern-action-expand)",
+	      \   "\<Plug>(fern-action-collapse)",
+	      \ )
+    nmap <buffer><nowait> R <Plug>(fern-action-reload)
+endfunction
+augroup FernCustom
+    autocmd!
+    autocmd BufEnter * call s:fern_reveal_current()
+    autocmd FileType fern call s:fern_init()
+augroup end
+let g:fern#disable_default_mappings = 1
+let g:fern#drawer_width = 45
+let g:fern#renderer = 'nerdfont'
+let g:fern#renderer#nerdfont#leading = '  '
+
+" FixCursorHold
+let g:cursorhold_updatetime = 200
 
 " echodoc
 let g:echodoc#enable_at_startup = 1
@@ -81,87 +105,149 @@ let g:fzf_colors = {
     \ 'header':  ['fg', 'Comment'],
 \ }
 
-" nerdtree
-let g:NERDTreeWinSize = 38
-
-function IsNTOpen()
-  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
+" lightline
+function! GetCocCurrentFunction() abort
+    return get(b:, 'coc_current_function', '')
 endfunction
-
-function IsNormalBufName(name)
-    return a:name !~# '\(__.*__\|NERD_tree_\)'
+function! s:get_coc_diagnostic(kind, sign) abort
+    let info = get(b:, 'coc_diagnostic_info', {})
+    if empty(info)
+        return ''
+    endif
+    let num = get(info, a:kind, 0)
+    if num == 0
+        return ''
+    endif
+    return printf('%s %d', a:sign, num)
 endfunction
-
-function BufNerdHighlight()
-    if !IsNTOpen()  " no nerdtree
-        return
-    elseif bufnr('$') <= 1 || winnr() == 1  " root window
-        return
-    elseif getwinvar(winnr(), '&syntax') == 'qf'  " quickfix / location list
-        return
-    elseif !IsNormalBufName(bufname('%'))  " not normal file buffer
-        return
-    elseif &previewwindow  " not preview window
-        return
-    elseif !filereadable(expand(bufname('%')))  " not exists
-        return
-    endif
-
-    if !(getline(1) ==# '' && 1 == line('$'))
-       :NERDTreeFind
-       wincmd p
-    else
-       :NERDTreeCWD
-       wincmd p
-    endif
+function! GetCocDiagnosticError() abort
+    " return s:get_coc_diagnostic('error', "\u274C")
+    return s:get_coc_diagnostic('error', "\uF00D")
 endfunction
-
-function RefNerdTree(do_refresh)
-    if !IsNTOpen()
-        return
-    endif
-    if a:do_refresh
-        if getbufvar('%', 'should_ref_nerd_tree', v:false)
-            :NERDTreeRefreshRoot
-        endif
-    else
-        call setbufvar('%', 'should_ref_nerd_tree', !filereadable(expand(bufname('%'))))
-    endif
-endfunction()
-
-autocmd BufEnter * call BufNerdHighlight()
-autocmd BufWrite * call RefNerdTree(v:false)
-autocmd BufWritePost * call RefNerdTree(v:true)
-
-" tagbar
-let g:tagbar_ctags_bin='ctags'
-let g:tagbar_width = 38
-let g:tagbar_left = 0
+function! GetCocDiagnosticWarn() abort
+    return s:get_coc_diagnostic('warning', "\u26A0")
+endfunction
+function! GetCocDiagnosticInfo() abort
+    return s:get_coc_diagnostic('information', "\u2139")
+endfunction
+function! GetCocDiagnosticHint() abort
+    return s:get_coc_diagnostic('hint', "\u270F")
+endfunction
+function! GetCocStatus() abort
+    return get(g:, 'coc_status', '')
+endfunction
+let g:lightline = {
+    \ 'colorscheme': 'one',
+    \ 'active': {
+    \   'left': [['mode', 'paste'],
+    \            ['currentfunction'],
+    \            ['coc_error', 'coc_warn', 'coc_info', 'coc_hint', 'coc_status']]
+    \ },
+    \ 'tabline': {
+    \   'left': [['buffers']],
+    \   'right': [['close']]
+    \ },
+    \ 'component_expand': {
+    \   'buffers': 'lightline#bufferline#buffers',
+    \   'coc_error': 'GetCocDiagnosticError',
+    \   'coc_warn': 'GetCocDiagnosticWarn',
+    \   'coc_info': 'GetCocDiagnosticInfo',
+    \   'coc_hint': 'GetCocDiagnosticHint',
+    \   'coc_status': 'GetCocStatus',
+    \ },
+    \ 'component_type': {
+    \   'buffers': 'tabsel',
+    \   'coc_error': 'error',
+    \   'coc_warn': 'warning',
+    \   'coc_info': 'normal',
+    \   'coc_hint': 'normal',
+    \ },
+    \ 'component_function': {
+    \   'currentfunction': 'GetCocCurrentFunction',
+    \ },
+  \ }
+let g:lightline#bufferline#show_number = 2
+let g:lightline#bufferline#enable_nerdfont = 1
+let g:lightline#bufferline#unicode_symbols = 1
+let g:lightline#bufferline#smart_path = 0
+let g:lightline#bufferline#modified = " \U1F589 "
+autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
 " undotree
 let g:undotree_WindowLayout = 3
 let g:undotree_SetFocusWhenToggle = 1
 
-" airline
-let g:airline_theme='onedark'
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#left_alt_sep = '|'
-let g:airline#extensions#whitespace#enabled = 0
-
 " cpp-modern
+let g:cpp_no_function_highlight = 1
+let g:cpp_attributes_highlight = 1
 let g:cpp_simple_highlight = 1
 let c_no_curly_error = 1
 
 " easymotion
 let g:EasyMotion_smartcase = 1
 
-" lsp-cxx-highlight
-highlight link LspCxxHlSymEnumConstant Constant
-highlight link LspCxxHlSymEnum Special
-highlight link LspCxxHlSymNamespace Identifier
-
 " one
 let g:onedark_terminal_italics = 1
 colorscheme onedark
+
+" vista
+let g:vista_sidebar_keepalt = 1
+let g:vista_stay_on_open = 0
+let g:vista_executive_for = {
+    \ 'c': 'coc',
+    \ 'cpp': 'coc',
+    \ 'python': 'coc',
+    \ 'rust': 'coc',
+    \ 'proto': 'ctags',
+\ }
+let g:vista_update_on_text_changed = 1
+let g:vista_update_on_text_changed_delay = 3000
+let g:vista_sidebar_width = 40
+let g:vista#renderer#enable_icon = 1
+let g:vista#renderer#icons = {
+    \ 'func': "\uf121",
+    \ 'function': "\uf121",
+    \ 'functions': "\uf121",
+    \ 'constructor': "\uf121",
+    \ 'method': "\uf121",
+    \ 'field': "\uf1b2",
+    \ 'fields': "\uf1b2",
+    \ 'var': "\uf1b2",
+    \ 'variable': "\uf1b2",
+    \ 'variables': "\uf1b2",
+\ }
+let g:vista_fzf_opt = ['--nth', '1..1000']
+function! s:vista_try_reload() abort
+    if vista#sidebar#IsOpen() && buflisted(bufnr('%'))
+        call vista#sidebar#Open()
+    endif
+endfunction
+augroup VistaAu
+    autocmd!
+    autocmd BufEnter * silent call s:vista_try_reload()
+augroup end
+
+function! s:all_listed_bufs_closed(except_winid)
+    for win in getwininfo()
+        if win.winid != a:except_winid && buflisted(win.bufnr)
+            return v:false
+        endif
+    endfor
+    return v:true
+endfunction
+autocmd WinClosed * if s:all_listed_bufs_closed(expand('<afile>')) | qall | endif
+
+highlight! link CocHighlightText Pmenu
+hi! link CocSem_namespace Constant
+hi! link CocSem_type Type
+hi! link CocSem_class Type
+" hi! link CocSem_variable Identifier
+hi! link CocSem_enum Structure
+hi! link CocSem_enumMember Constant
+hi! link CocSem_function Function
+" hi! link CocSem_parameter Identifier
+hi! link CocSem_method Function
+hi! link CocSem_property Function
+hi! link CocSem_typeParameter Type
+hi! link CocSem_macro Macro
+" hi! link CocSem_unknown

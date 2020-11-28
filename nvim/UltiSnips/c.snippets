@@ -14,3 +14,10 @@ endsnippet
 snippet Inc "Include non-system headers"
 #include "${1:`!v substitute(expand('%:t:r'), '_test$', '', '')`}.h"
 endsnippet
+
+snippet allow "Suppress a GCC diagnose"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-W${1:deprecated-declarations}"
+${VISUAL}$0
+#pragma GCC diagnostic pop
+endsnippet
